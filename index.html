@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>動作美感與身體知覺研究問卷</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #f5f0e8;
+    --gold: #c9a96e;
+    --gold-light: #e8d5b0;
+    --gold-dark: #a07840;
+    --brown: #6b4c2a;
+    --text-dark: #2c1f0e;
+    --text-mid: #5a4535;
+    --text-light: #8c7560;
+    --border: #ddd0b8;
+    --shadow: rgba(107,76,42,0.12);
+    --selected-bg: #f0e8d4;
+    --selected-border: #c9a96e;
+    --error: #c0392b;
+    --success: #2d7a4a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text-dark);
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(ellipse at 10% 20%, rgba(201,169,110,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(201,169,110,0.06) 0%, transparent 50%);
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px; background: var(--border); z-index: 100;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+    transition: width 0.5s ease;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 760px; margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    text-align: center; margin-bottom: 48px;
+  }
+  .page-tag {
+    display: inline-block;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold-dark); font-weight: 500;
+    border: 1px solid var(--gold-light);
+    padding: 4px 16px; border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .page-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 400; color: var(--text-dark);
+    line-height: 1.5; margin-bottom: 12px;
+  }
+  .page-subtitle {
+    font-size: 14px; color: var(--text-light);
+    line-height: 1.8;
+  }
+  .divider {
+    width: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 20px var(--shadow);
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold-dark); font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 18px; font-weight: 500;
+    color: var(--text-dark); margin-bottom: 6px;
+  }
+  .section-desc {
+    font-size: 13px; color: var(--text-light);
+    line-height: 1.7; margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .scale-hint {
+    font-size: 12px; color: var(--text-light);
+    margin-bottom: 20px; font-style: italic;
+  }
+
+  /* ── Question ── */
+  .question {
+    margin-bottom: 28px;
+  }
+  .question-text {
+    font-size: 15px; line-height: 1.7;
+    color: var(--text-dark); margin-bottom: 14px;
+    font-weight: 400;
+  }
+  .question-num {
+    font-size: 12px; color: var(--gold-dark);
+    font-weight: 500; margin-right: 6px;
+  }
+  .reverse-badge {
+    display: inline-block;
+    font-size: 10px; color: var(--gold-dark);
+    border: 1px solid var(--gold-light);
+    padding: 1px 6px; border-radius: 4px;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  /* ── Likert 7-point ── */
+  .likert-7 {
+    display: flex; gap: 6px;
+    flex-wrap: wrap;
+  }
+  .likert-7 .scale-labels {
+    display: flex; justify-content: space-between;
+    width: 100%; font-size: 11px; color: var(--text-light);
+    margin-bottom: 8px; padding: 0 2px;
+  }
+  .likert-7 .options {
+    display: flex; gap: 6px; flex-wrap: nowrap; width: 100%;
+  }
+  .likert-7 label {
+    flex: 1; min-width: 36px;
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer;
+  }
+  .likert-7 input[type=radio] { display: none; }
+  .likert-7 .btn {
+    width: 100%; aspect-ratio: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--text-light);
+    transition: all 0.2s ease;
+    background: white;
+  }
+  .likert-7 input:checked + .btn {
+    background: var(--selected-bg);
+    border-color: var(--selected-border);
+    color: var(--gold-dark);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(201,169,110,0.2);
+  }
+  .likert-7 label:hover .btn {
+    border-color: var(--gold-light);
+    background: #fdf8f0;
+  }
+
+  /* ── Likert 5-point ── */
+  .likert-5 .options {
+    display: flex; gap: 8px; flex-wrap: nowrap; width: 100%;
+  }
+  .likert-5 .scale-labels {
+    display: flex; justify-content: space-between;
+    width: 100%; font-size: 11px; color: var(--text-light);
+    margin-bottom: 8px; padding: 0 2px;
+  }
+  .likert-5 label {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer;
+  }
+  .likert-5 input[type=radio] { display: none; }
+  .likert-5 .btn {
+    width: 100%; aspect-ratio: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--text-light);
+    transition: all 0.2s ease;
+    background: white;
+  }
+  .likert-5 input:checked + .btn {
+    background: var(--selected-bg);
+    border-color: var(--selected-border);
+    color: var(--gold-dark);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(201,169,110,0.2);
+  }
+  .likert-5 label:hover .btn {
+    border-color: var(--gold-light);
+    background: #fdf8f0;
+  }
+
+  /* ── Select / Input ── */
+  select, input[type=text], input[type=number] {
+    width: 100%; padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 14px; color: var(--text-dark);
+    background: white;
+    appearance: none;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  select:focus, input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,169,110,0.15);
+  }
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '▾'; position: absolute;
+    right: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--text-light); pointer-events: none;
+  }
+  label.field-label {
+    display: block; font-size: 13px;
+    color: var(--text-mid); margin-bottom: 8px; font-weight: 500;
+  }
+  .field { margin-bottom: 20px; }
+
+  /* ── Checkbox group (multi-select) ── */
+  .checkbox-group {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .checkbox-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 14px; color: var(--text-dark);
+    cursor: pointer; transition: all 0.2s;
+    background: white;
+  }
+  .checkbox-item:hover { border-color: var(--gold-light); background: #fdf8f0; }
+  .checkbox-item input[type=checkbox] {
+    width: 18px; height: 18px; accent-color: var(--gold-dark);
+    flex-shrink: 0;
+  }
+  .checkbox-item:has(input:checked) {
+    background: var(--selected-bg);
+    border-color: var(--selected-border);
+    font-weight: 600;
+  }
+  .ratio-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 10px;
+  }
+  .ratio-row label {
+    font-size: 13.5px; color: var(--text-mid); flex-shrink: 0;
+  }
+  .ratio-row select { width: auto; min-width: 140px; }
+
+  /* ── Consent ── */
+  .consent-box {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px;
+    font-size: 13.5px; line-height: 1.9;
+    color: var(--text-mid); margin-bottom: 20px;
+    max-height: 320px; overflow-y: auto;
+  }
+  .consent-box h4 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px; color: var(--text-dark);
+    margin: 16px 0 8px; font-weight: 500;
+  }
+  .consent-check {
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer; padding: 16px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    transition: all 0.2s;
+  }
+  .consent-check:hover { border-color: var(--gold); background: #fdf8f0; }
+  .consent-check input { width: 18px; height: 18px; accent-color: var(--gold-dark); margin-top: 2px; flex-shrink: 0; }
+  .consent-check span { font-size: 14px; color: var(--text-dark); line-height: 1.6; }
+
+  /* ── Buttons ── */
+  .btn-row {
+    display: flex; gap: 12px; margin-top: 32px;
+    justify-content: space-between; align-items: center;
+  }
+  .btn-back {
+    padding: 12px 28px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px; background: white;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 14px; color: var(--text-mid);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--gold); color: var(--gold-dark); }
+  .btn-next {
+    padding: 14px 40px;
+    border: none; border-radius: 10px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 14px; font-weight: 500;
+    color: white; cursor: pointer;
+    transition: all 0.2s; letter-spacing: 0.5px;
+    box-shadow: 0 4px 16px rgba(160,120,64,0.3);
+  }
+  .btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(160,120,64,0.4); }
+  .btn-next:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* ── Error / Success ── */
+  .error-msg {
+    color: var(--error); font-size: 12px;
+    margin-top: 6px; display: none;
+  }
+  .question.has-error .error-msg { display: block; }
+  .question.has-error .btn { border-color: #f0c0bb; }
+
+  .success-screen {
+    text-align: center; padding: 60px 24px;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 32px; margin: 0 auto 24px;
+  }
+  .success-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 24px; color: var(--text-dark); margin-bottom: 12px;
+  }
+  .success-desc { font-size: 14px; color: var(--text-light); line-height: 1.8; }
+
+  .lottery-box { text-align: left; margin-top: 8px; }
+  .lottery-box h4 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16px; color: var(--text-dark); margin-bottom: 8px; text-align: center;
+  }
+  .lottery-desc {
+    font-size: 13px; color: var(--text-light); line-height: 1.8; text-align: center;
+  }
+  .lottery-input {
+    width: 100%; padding: 12px 16px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: #fff; font-size: 14px; color: var(--text-dark);
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+  .lottery-input:focus { outline: none; border-color: var(--gold); }
+  .lottery-status {
+    text-align: center; font-size: 13px; margin-top: 12px; min-height: 18px;
+  }
+  .lottery-status.success { color: var(--success); }
+  .lottery-status.error { color: var(--error); }
+
+
+  /* ── Page transition ── */
+  .page { display: none; animation: fadeIn 0.4s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Step indicator ── */
+  .step-indicator {
+    display: flex; justify-content: center; gap: 8px;
+    margin-bottom: 40px;
+  }
+  .step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); transition: all 0.3s;
+  }
+  .step-dot.active { background: var(--gold); width: 24px; border-radius: 4px; }
+  .step-dot.done { background: var(--gold-light); }
+
+  @media (max-width: 480px) {
+    .likert-7 .btn { font-size: 11px; }
+    .likert-5 .btn { font-size: 12px; }
+    .card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:14%"></div></div>
+
+<div class="container">
+
+  <!-- Step indicator -->
+  <div class="step-indicator" id="stepIndicator">
+    <div class="step-dot active" id="dot-0"></div>
+    <div class="step-dot" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
+    <div class="step-dot" id="dot-4"></div>
+    <div class="step-dot" id="dot-5"></div>
+    <div class="step-dot" id="dot-6"></div>
+    <div class="step-dot" id="dot-7"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAGE 0：知情同意
+  ══════════════════════════════════════════ -->
+  <div class="page active" id="page-0">
+    <div class="page-header">
+      <div class="page-tag">研究說明</div>
+      <h1 class="page-title">動作美感與身體知覺研究問卷</h1>
+      <div class="divider"></div>
+      <p class="page-subtitle">
+        高雄醫學大學心理學系｜碩士研究計畫<br>
+        研究者：林詩琦　｜　指導教授：林錦宏教授<br>
+        聯絡電話：07-3215422 轉 822　｜　0983-878-205<br>
+        預計填答時間：約 15–20 分鐘
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="consent-box">
+        <p>您好，感謝您願意參與本研究。本研究由高雄醫學大學心理學系碩士生<strong>林詩琦</strong>執行，指導教授為<strong>林錦宏教授</strong>，本計畫已通過IRB倫理審查。</p>
+
+        <h4>研究目的</h4>
+        <p>本研究旨在驗證六份與「身體動作感知」、「身體態度」及「主觀幸福感」相關的心理量表測量特性，作為後續長期研究的基礎工具，探討動作美感如何影響個體的心理健康與身體意象。</p>
+
+        <h4>參與條件</h4>
+        <p>年滿18歲，目前或曾有任何形式的身體訓練或運動習慣（如舞蹈、健身、瑜伽、武術、走秀、運動競技等）。若無經驗也歡迎您填表。</p>
+
+        <h4>填答說明</h4>
+        <p>問卷共分七個部分，包含基本資料及六份量表，共約52題。每個部分皆可返回前頁修改，但提交後資料無法撤回。</p>
+
+        <h4>匿名與資料保護</h4>
+        <p>本問卷採完全匿名設計，不收集任何可識別個人身份的資訊。所有資料僅供學術研究使用，以群體統計方式呈現，加密保存至少五年。</p>
+
+        <h4>權益保障</h4>
+        <p>本調查採匿名方式進行，所有資料僅供學術統計分析使用，絕對保密，請安心填答。您的參與純屬自願，可隨時停止填答。</p>
+
+        <h4>聯絡資訊</h4>
+        <p>研究者：林詩琦｜指導教授：林錦宏教授｜高雄醫學大學心理學系｜電話：07-3215422 轉 822</p>
+      </div>
+
+      <label class="consent-check" id="consentLabel">
+        <input type="checkbox" id="consentCheck">
+        <span>我已詳閱上述研究說明，了解研究目的、填答方式與我的權利，並自願同意參與本研究。</span>
+      </label>
+    </div>
+
+    <div class="btn-row" style="justify-content:flex-end">
+      <button class="btn-next" onclick="nextPage(0)" id="btn-consent">開始填答 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAGE 1：基本資料
+  ══════════════════════════════════════════ -->
+  <div class="page" id="page-1">
+    <div class="page-header">
+      <div class="page-tag">第一部分</div>
+      <h1 class="page-title">基本資料</h1>
+      <div class="divider"></div>
+    </div>
+
+    <div class="card">
+      <div class="field">
+        <label class="field-label">Q1. 您的年齡</label>
+        <div class="select-wrap">
+          <select id="age">
+            <option value="">請選擇</option>
+            <option value="18-25歲">18–25 歲</option>
+            <option value="26-35歲">26–35 歲</option>
+            <option value="36-45歲">36–45 歲</option>
+            <option value="46-55歲">46–55 歲</option>
+            <option value="56歲以上">56 歲以上</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Q2. 您的性別</label>
+        <div class="select-wrap">
+          <select id="gender">
+            <option value="">請選擇</option>
+            <option value="男性">男性</option>
+            <option value="女性">女性</option>
+            <option value="非二元性別">非二元性別</option>
+            <option value="不願透露">不願透露</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Q3. 過去3個月，您平均每週實際運動的次數是幾次？（請填 0–7 的整數）</label>
+        <input type="number" id="exercise_freq_continuous" class="text-input" min="0" max="7" step="1" placeholder="請輸入 0–7 之間的數字">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Q4. 運動當下，您的費力／喘的程度通常最接近下列何者？</label>
+        <div class="select-wrap">
+          <select id="exercise_intensity">
+            <option value="">請選擇</option>
+            <option value="能正常說話">能正常說話，不太會喘</option>
+            <option value="能說話會喘">能說話，但會喘</option>
+            <option value="只能講短句">只能講短句，較難完整說話</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Q5. 您主要從事的運動類型是？（可複選）</label>
+        <div class="checkbox-group" id="exercise_type_group">
+          <label class="checkbox-item"><input type="checkbox" name="exercise_type" value="有氧"> 有氧運動（跑步、游泳、飛輪等）</label>
+          <label class="checkbox-item"><input type="checkbox" name="exercise_type" value="阻力重訓"> 阻力／重量訓練</label>
+          <label class="checkbox-item"><input type="checkbox" name="exercise_type" value="舞蹈律動"> 舞蹈／律動</label>
+          <label class="checkbox-item"><input type="checkbox" name="exercise_type" value="瑜伽皮拉提斯"> 瑜伽／皮拉提斯</label>
+          <label class="checkbox-item"><input type="checkbox" name="exercise_type" value="球類"> 球類運動</label>
+          <label class="checkbox-item"><input type="checkbox" name="exercise_type" value="武術格鬥"> 武術／格鬥</label>
+          <label class="checkbox-item"><input type="checkbox" name="exercise_type" value="混合訓練"> 混合訓練／CrossFit</label>
+          <label class="checkbox-item"><input type="checkbox" name="exercise_type" value="其他"> 其他</label>
+        </div>
+      </div>
+
+      <div class="field" id="ratio-field" style="display:none;">
+        <label class="field-label">Q6. 承上題，請估計以下各類型分別占您運動時間的比例：</label>
+        <div id="ratio-group"></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Q7. 您過去是否曾接受舞蹈、走秀或動作類專業訓練達半年以上？</label>
+        <div class="select-wrap">
+          <select id="past_training_experience">
+            <option value="">請選擇</option>
+            <option value="是">是</option>
+            <option value="否">否</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Q8. 您目前這樣規律運動的習慣，已經持續多久了？</label>
+        <div class="select-wrap">
+          <select id="exercise_duration_group">
+            <option value="">請選擇</option>
+            <option value="未滿6個月">未滿6個月</option>
+            <option value="6個月-未滿1年">6個月–未滿1年</option>
+            <option value="1-3年">1–3年</option>
+            <option value="3年以上">3年以上</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevPage(1)">← 返回</button>
+      <button class="btn-next" onclick="nextPage(1)">下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAGE 2：SRSS 節律穩定性
+  ══════════════════════════════════════════ -->
+  <div class="page" id="page-2">
+    <div class="page-header">
+      <div class="page-tag">第二部分</div>
+      <h1 class="page-title">節律穩定性量表</h1>
+      <div class="divider"></div>
+    </div>
+    <div class="card">
+      <div class="section-desc">以下問題想了解您在動作訓練表現中的「節律穩定程度」。請依據您最近的真實感受圈選最符合的數字。</div>
+      <div class="scale-hint">1 = 完全不符合　　　　7 = 非常符合</div>
+
+      <div id="srss-questions"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevPage(2)">← 返回</button>
+      <button class="btn-next" onclick="nextPage(2)">下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAGE 3：SMFS 動作流暢性
+  ══════════════════════════════════════════ -->
+  <div class="page" id="page-3">
+    <div class="page-header">
+      <div class="page-tag">第三部分</div>
+      <h1 class="page-title">動作流暢性量表</h1>
+      <div class="divider"></div>
+    </div>
+    <div class="card">
+      <div class="section-desc">以下問題想了解您在動作訓練表現中的「流暢程度」。請依據您最近的真實感受圈選最符合的數字。</div>
+      <div class="scale-hint">1 = 完全不符合　　　　7 = 非常符合</div>
+
+      <div id="smfs-questions"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevPage(3)">← 返回</button>
+      <button class="btn-next" onclick="nextPage(3)">下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAGE 4：SPCS 身體軸線控制
+  ══════════════════════════════════════════ -->
+  <div class="page" id="page-4">
+    <div class="page-header">
+      <div class="page-tag">第四部分</div>
+      <h1 class="page-title">身體軸線控制量表</h1>
+      <div class="divider"></div>
+    </div>
+    <div class="card">
+      <div class="section-desc">以下問題想了解您在動作訓練表現中的「身體控制與穩定程度」。請依據您最近的真實感受圈選最符合的數字。</div>
+      <div class="scale-hint">1 = 完全不符合　　　　7 = 非常符合</div>
+
+      <div id="spcs-questions"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevPage(4)">← 返回</button>
+      <button class="btn-next" onclick="nextPage(4)">下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAGE 5：ASS 審美自我
+  ══════════════════════════════════════════ -->
+  <div class="page" id="page-5">
+    <div class="page-header">
+      <div class="page-tag">第五部分</div>
+      <h1 class="page-title">審美自我量表</h1>
+      <div class="divider"></div>
+    </div>
+    <div class="card">
+      <div class="section-desc">請依據您對自己在動作或表現中的「美感與呈現」的感受作答。</div>
+      <div class="scale-hint">1 = 完全不符合　　　　7 = 非常符合</div>
+
+      <div id="ass-questions"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevPage(5)">← 返回</button>
+      <button class="btn-next" onclick="nextPage(5)">下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAGE 6：BAS-2 身體欣賞
+  ══════════════════════════════════════════ -->
+  <div class="page" id="page-6">
+    <div class="page-header">
+      <div class="page-tag">第六部分</div>
+      <h1 class="page-title">身體欣賞量表</h1>
+      <div class="divider"></div>
+    </div>
+    <div class="card">
+      <div class="section-desc">以下題目詢問您對自身身體的態度與感受。請依您最真實的感受作答。</div>
+      <div class="scale-hint">1 = 從不　　2 = 很少　　3 = 有時　　4 = 經常　　5 = 總是</div>
+
+      <div id="bas2-questions"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevPage(6)">← 返回</button>
+      <button class="btn-next" onclick="nextPage(6)">下一步 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAGE 7：SHS-C 主觀幸福感
+  ══════════════════════════════════════════ -->
+  <div class="page" id="page-7">
+    <div class="page-header">
+      <div class="page-tag">第七部分</div>
+      <h1 class="page-title">主觀幸福感量表</h1>
+      <div class="divider"></div>
+    </div>
+    <div class="card">
+      <div class="section-desc">以下題目想了解您對自己整體生活狀態的主觀感受。請依您最真實的感受，在每一題各自的量尺上圈選最符合的數字。</div>
+
+      <div id="shsc-questions"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevPage(7)">← 返回</button>
+      <button class="btn-next" onclick="submitSurvey()" id="btn-submit">提交問卷 ✓</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PAGE 8：完成
+  ══════════════════════════════════════════ -->
+  <div class="page" id="page-8">
+    <div class="card success-screen">
+      <div class="success-icon">✓</div>
+      <h2 class="success-title">感謝您的參與！</h2>
+      <div class="divider"></div>
+      <p class="success-desc">
+        您的問卷已成功提交，對本研究非常有幫助。<br><br>
+        本研究旨在建立台灣本土化的動作美感與身體知覺測量工具，<br>
+        有助於長照、日照及身心健康促進領域的學術研究。<br><br>
+        如有任何疑問，歡迎聯絡研究者：林詩琦<br>
+        高雄醫學大學心理學系
+      </p>
+
+      <div class="divider"></div>
+
+      <div class="lottery-box">
+        <h4>抽獎活動（選填）</h4>
+        <p class="lottery-desc">
+          感謝您的參與！若您願意留下 Email，將有機會抽中 LINE POINTS 50點。<br>
+          此 Email 將獨立儲存，不會與您的問卷答案產生任何關聯。<br>
+          不填寫不影響問卷已提交之結果。
+        </p>
+        <div class="field" style="margin-top:16px;">
+          <input type="email" id="lottery-email" class="lottery-input" placeholder="您的 Email（選填）">
+        </div>
+        <div class="btn-row" style="justify-content:center; margin-top:16px;">
+          <button class="btn-next" onclick="submitLottery()" id="btn-lottery">參加抽獎</button>
+        </div>
+        <p class="lottery-status" id="lottery-status"></p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ── 題目資料 ──────────────────────────────────────────────
+
+const SRSS = [
+  { id:'r1', text:'做動作時，我能清楚感受到自己的節奏是否穩定。', reverse: false },
+  { id:'r2', text:'當我的動作跟上音樂節拍時，我會有一種「對了」的感覺。', reverse: false },
+  { id:'r3', text:'在動作訓練中，我能自然地抓住並維持動作的節律。', reverse: false },
+  { id:'r4', text:'我的身體對節奏的變化很敏感，能迅速察覺並調整。', reverse: false },
+  { id:'r5', text:'我能感覺到自己的動作是否有穩定、規律的韻律感。', reverse: false },
+  { id:'r6', text:'我很難感受到自己的動作是否有穩定的節律。', reverse: true },
+];
+
+const SMFS = [
+  { id:'f1', text:'做動作時，我能感受到動作從頭到尾是連貫流暢的。', reverse: false },
+  { id:'f2', text:'當我的動作流暢時，我會感到一種自然舒展的滿足感。', reverse: false },
+  { id:'f3', text:'我能清楚察覺自己的動作何時顯得流暢、何時顯得卡頓。', reverse: false },
+  { id:'f4', text:'做動作時，我能感受到身體各部份之間順暢地配合。', reverse: false },
+  { id:'f5', text:'流暢的動作讓我感覺自己更有掌控感。', reverse: false },
+  { id:'f6', text:'我的動作通常感覺斷斷續續，缺乏連貫感。', reverse: true },
+];
+
+const SPCS = [
+  { id:'p1', text:'做動作時，我能清楚感受到自己身體的重心位置。', reverse: false },
+  { id:'p2', text:'走路或移動時，我能感受到身體有一條由下至上的中心軸線。', reverse: false },
+  { id:'p3', text:'做動作時，我能維持頭部向上延伸、脊椎拉長的感覺。', reverse: false },
+  { id:'p4', text:'即使在移動中，我也能感受到自己的身體保持穩定而不散亂。', reverse: false },
+  { id:'p5', text:'當我的身體軸線穩定時，我感覺整個人更有存在感和自信。', reverse: false },
+  { id:'p6', text:'做動作時，我很難感受到自己身體的中心在哪裡。', reverse: true },
+];
+
+const ASS = [
+  { id:'a1', text:'在身體訓練的過程中，我偶爾會注意到自己的某個動作有種「美」的感覺。', reverse: false },
+  { id:'a2', text:'我認為自己是一個對「美感」有所感知的人。', reverse: false },
+  { id:'a3', text:'當我做出一個讓自己感到美的動作時，我對自己的看法會變得更正面。', reverse: false },
+  { id:'a4', text:'美的體驗讓我對自己有更深的了解。', reverse: false },
+  { id:'a5', text:'在動作訓練中，我會注意自己的動作是否符合我心目中「美的樣子」。', reverse: false },
+  { id:'a6', text:'我相信自己有能力透過動作來展現美感。', reverse: false },
+  { id:'a7', text:'感受到自己動作的美感，會讓我在訓練中更投入。', reverse: false },
+  { id:'a8', text:'當我的動作達到一種美的狀態時，我會感到一種內心的滿足感。', reverse: false },
+  { id:'a9', text:'我有自己對「美的動作」的定義，不完全依賴他人的評價。', reverse: false },
+  { id:'a10', text:'我從來不覺得自己的動作或身體有什麼美感可言。', reverse: true },
+];
+
+const BAS2 = [
+  { id:'b1', text:'我尊重自己的身體。' },
+  { id:'b2', text:'我對自己的身體感到舒適自在。' },
+  { id:'b3', text:'我覺得自己的身體至少有一些值得欣賞的地方。' },
+  { id:'b4', text:'我對自己的身體抱持正向的態度。' },
+  { id:'b5', text:'我會留意並照顧自己身體的需求。' },
+  { id:'b6', text:'我對自己的身體懷有一種珍愛的感受。' },
+  { id:'b7', text:'我欣賞自己身體獨特而與眾不同的特質。' },
+  { id:'b8', text:'我的行為舉止反映出我對自己身體的正向態度；例如，我會抬頭挺胸、面帶微笑。' },
+  { id:'b9', text:'我對自己的身體感到自在。' },
+  { id:'b10', text:'即使我與媒體塑造的吸引力形象不同，我仍覺得自己是美麗的。' },
+];
+
+const SHSC = [
+  { id:'s1', text:'一般而言，我認為自己：', low:'不是一個很快樂的人', high:'是一個很快樂的人', reverse: false },
+  { id:'s2', text:'跟大部分同儕相比較，我認為自己：', low:'比較不快樂', high:'比較快樂', reverse: false },
+  { id:'s3', text:'有些人經常都很快樂。不管發生什麼事，他們都能享受生活，並從中獲得好的結果。以上的描述跟你有多符合？', low:'完全不符合', high:'非常符合', reverse: false },
+  { id:'s4', text:'有些人經常很不快樂。雖然他們不是憂鬱，但是該快樂的時刻就是快樂不起來。以上的描述跟你有多符合？', low:'完全不符合', high:'非常符合', reverse: true },
+];
+
+// ── 渲染函式 ──────────────────────────────────────────────
+
+function render7(items, containerId) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = items.map((q, i) => `
+    <div class="question" id="q-${q.id}">
+      <div class="question-text">
+        <span class="question-num">${i+1}.</span>${q.text}
+        ${q.reverse ? '<span class="reverse-badge">反向題</span>' : ''}
+      </div>
+      <div class="likert-7">
+        <div class="scale-labels">
+          <span>完全不符合</span><span>非常符合</span>
+        </div>
+        <div class="options">
+          ${[1,2,3,4,5,6,7].map(v => `
+            <label>
+              <input type="radio" name="${q.id}" value="${v}">
+              <div class="btn">${v}</div>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+      <div class="error-msg">請選擇一個選項</div>
+    </div>
+  `).join('');
+}
+
+function renderSHS(items, containerId) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = items.map((q, i) => `
+    <div class="question" id="q-${q.id}">
+      <div class="question-text">
+        <span class="question-num">${i+1}.</span>${q.text}
+        ${q.reverse ? '<span class="reverse-badge">反向題</span>' : ''}
+      </div>
+      <div class="likert-7">
+        <div class="scale-labels">
+          <span>${q.low}</span><span>${q.high}</span>
+        </div>
+        <div class="options">
+          ${[1,2,3,4,5,6,7].map(v => `
+            <label>
+              <input type="radio" name="${q.id}" value="${v}">
+              <div class="btn">${v}</div>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+      <div class="error-msg">請選擇一個選項</div>
+    </div>
+  `).join('');
+}
+
+function render5(items, containerId) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = items.map((q, i) => `
+    <div class="question" id="q-${q.id}">
+      <div class="question-text">
+        <span class="question-num">${i+1}.</span>${q.text}
+      </div>
+      <div class="likert-5">
+        <div class="scale-labels">
+          <span>從不</span><span>很少</span><span>有時</span><span>經常</span><span>總是</span>
+        </div>
+        <div class="options">
+          ${[1,2,3,4,5].map(v => `
+            <label>
+              <input type="radio" name="${q.id}" value="${v}">
+              <div class="btn">${v}</div>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+      <div class="error-msg">請選擇一個選項</div>
+    </div>
+  `).join('');
+}
+
+// ── 初始化 ──────────────────────────────────────────────
+
+render7(SRSS, 'srss-questions');
+render7(SMFS, 'smfs-questions');
+render7(SPCS, 'spcs-questions');
+render7(ASS,  'ass-questions');
+render5(BAS2, 'bas2-questions');
+renderSHS(SHSC, 'shsc-questions');
+
+// ── 運動類型複選 → 條件式時間占比 ──────────────────────────────
+
+const RATIO_OPTIONS = ['不到25%', '25-50%', '50-75%', '75%以上'];
+
+function updateRatioField() {
+  const checked = Array.from(document.querySelectorAll('input[name="exercise_type"]:checked')).map(el => el.value);
+  const field = document.getElementById('ratio-field');
+  const group = document.getElementById('ratio-group');
+
+  if (checked.length >= 2) {
+    field.style.display = '';
+    group.innerHTML = checked.map(type => `
+      <div class="ratio-row">
+        <label>${type}</label>
+        <div class="select-wrap">
+          <select name="ratio_${type}" class="exercise-ratio-select" data-type="${type}">
+            <option value="">請選擇</option>
+            ${RATIO_OPTIONS.map(o => `<option value="${o}">${o}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    field.style.display = 'none';
+    group.innerHTML = '';
+  }
+}
+
+document.getElementById('exercise_type_group').addEventListener('change', updateRatioField);
+
+// ── 頁面管理 ──────────────────────────────────────────────
+
+let currentPage = 0;
+const TOTAL_PAGES = 8;
+
+function showPage(n) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${n}`).classList.add('active');
+  currentPage = n;
+  updateProgress();
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const pct = Math.round((currentPage / (TOTAL_PAGES - 1)) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function updateDots() {
+  for (let i = 0; i < 8; i++) {
+    const d = document.getElementById(`dot-${i}`);
+    if (!d) continue;
+    d.className = 'step-dot';
+    if (i === currentPage) d.classList.add('active');
+    else if (i < currentPage) d.classList.add('done');
+  }
+}
+
+// ── 驗證 ──────────────────────────────────────────────
+
+function validatePage(pageNum) {
+  let valid = true;
+
+  if (pageNum === 0) {
+    if (!document.getElementById('consentCheck').checked) {
+      alert('請勾選知情同意方可繼續填答。'); return false;
+    }
+    return true;
+  }
+
+  if (pageNum === 1) {
+    ['age','gender','exercise_intensity','past_training_experience','exercise_duration_group'].forEach(id => {
+      if (!document.getElementById(id).value) {
+        document.getElementById(id).style.borderColor = 'var(--error)';
+        valid = false;
+      } else {
+        document.getElementById(id).style.borderColor = '';
+      }
+    });
+
+    const freqInput = document.getElementById('exercise_freq_continuous');
+    const freqVal = freqInput.value;
+    if (freqVal === '' || isNaN(freqVal) || freqVal < 0 || freqVal > 7) {
+      freqInput.style.borderColor = 'var(--error)';
+      valid = false;
+    } else {
+      freqInput.style.borderColor = '';
+    }
+
+    const typesChecked = document.querySelectorAll('input[name="exercise_type"]:checked');
+    const typeGroup = document.getElementById('exercise_type_group');
+    if (typesChecked.length === 0) {
+      typeGroup.style.borderColor = 'var(--error)';
+      valid = false;
+    } else {
+      typeGroup.style.borderColor = '';
+    }
+
+    if (typesChecked.length >= 2) {
+      const ratioSelects = document.querySelectorAll('.exercise-ratio-select');
+      ratioSelects.forEach(sel => {
+        if (!sel.value) { sel.style.borderColor = 'var(--error)'; valid = false; }
+        else { sel.style.borderColor = ''; }
+      });
+    }
+
+    if (!valid) alert('請完成所有基本資料欄位。');
+    return valid;
+  }
+
+  const pageItems = { 2: SRSS, 3: SMFS, 4: SPCS, 5: ASS, 6: BAS2, 7: SHSC };
+  const items = pageItems[pageNum];
+  if (!items) return true;
+
+  items.forEach(q => {
+    const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+    const qEl = document.getElementById(`q-${q.id}`);
+    if (!selected) {
+      qEl.classList.add('has-error');
+      valid = false;
+    } else {
+      qEl.classList.remove('has-error');
+    }
+  });
+
+  if (!valid) {
+    alert('請回答本頁所有題目後再繼續。');
+    const firstErr = document.querySelector('.has-error');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return valid;
+}
+
+function nextPage(current) {
+  if (!validatePage(current)) return;
+  showPage(current + 1);
+}
+
+function prevPage(current) {
+  showPage(current - 1);
+}
+
+// ── 取值與計分 ──────────────────────────────────────────────
+
+function getVal(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? parseInt(el.value) : null;
+}
+
+function calcTotal(items, reverseMax) {
+  const vals = items.map(q => {
+    const v = getVal(q.id);
+    return q.reverse ? (reverseMax + 1 - v) : v;
+  });
+  return (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2);
+}
+
+// ── 提交 ──────────────────────────────────────────────
+
+async function submitLottery() {
+  const emailEl = document.getElementById('lottery-email');
+  const statusEl = document.getElementById('lottery-status');
+  const btn = document.getElementById('btn-lottery');
+  const email = emailEl.value.trim();
+
+  if (!email) {
+    statusEl.textContent = '請輸入 Email，或直接關閉頁面。';
+    statusEl.className = 'lottery-status error';
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    statusEl.textContent = 'Email 格式不正確，請重新輸入。';
+    statusEl.className = 'lottery-status error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '送出中…';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/lottery_entries`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email })
+    });
+
+    if (res.ok || res.status === 201) {
+      statusEl.textContent = '已成功登記，感謝您的參與！';
+      statusEl.className = 'lottery-status success';
+      btn.textContent = '已登記 ✓';
+      emailEl.disabled = true;
+    } else {
+      statusEl.textContent = '登記時發生錯誤，請稍後再試。';
+      statusEl.className = 'lottery-status error';
+      btn.disabled = false;
+      btn.textContent = '參加抽獎';
+    }
+  } catch (e) {
+    statusEl.textContent = '網路連線異常，請確認網路後再試。';
+    statusEl.className = 'lottery-status error';
+    btn.disabled = false;
+    btn.textContent = '參加抽獎';
+  }
+}
+
+const SUPABASE_URL = 'https://zxkkvcrtvvflkvpiniyx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp4a2t2Y3J0dnZmbGt2cGluaXl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NDY1MDAsImV4cCI6MjA5MzEyMjUwMH0.zOCP-VIFBVIOUff-XAY0RObfTz2ouFz2W62ulyuPgy0';
+
+async function submitSurvey() {
+  if (!validatePage(7)) return;
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = '提交中…';
+
+  const exerciseTypes = Array.from(document.querySelectorAll('input[name="exercise_type"]:checked')).map(el => el.value);
+  const ratioSelects = document.querySelectorAll('.exercise-ratio-select');
+  let exerciseTypeRatio = null;
+  if (ratioSelects.length > 0) {
+    exerciseTypeRatio = {};
+    ratioSelects.forEach(sel => { exerciseTypeRatio[sel.dataset.type] = sel.value; });
+  }
+
+  const payload = {
+    age:                        document.getElementById('age').value,
+    gender:                     document.getElementById('gender').value,
+    exercise_freq_continuous:   parseInt(document.getElementById('exercise_freq_continuous').value),
+    exercise_intensity:         document.getElementById('exercise_intensity').value,
+    exercise_type:              exerciseTypes.join(','),
+    exercise_type_ratio:        exerciseTypeRatio,
+    past_training_experience:   document.getElementById('past_training_experience').value,
+    exercise_duration_group:    document.getElementById('exercise_duration_group').value,
+    r1: getVal('r1'), r2: getVal('r2'), r3: getVal('r3'),
+    r4: getVal('r4'), r5: getVal('r5'), r6: getVal('r6'),
+    srss_total: parseFloat(calcTotal(SRSS, 7)),
+    f1: getVal('f1'), f2: getVal('f2'), f3: getVal('f3'),
+    f4: getVal('f4'), f5: getVal('f5'), f6: getVal('f6'),
+    smfs_total: parseFloat(calcTotal(SMFS, 7)),
+    p1: getVal('p1'), p2: getVal('p2'), p3: getVal('p3'),
+    p4: getVal('p4'), p5: getVal('p5'), p6: getVal('p6'),
+    spcs_total: parseFloat(calcTotal(SPCS, 7)),
+    a1: getVal('a1'), a2: getVal('a2'), a3: getVal('a3'),
+    a4: getVal('a4'), a5: getVal('a5'), a6: getVal('a6'),
+    a7: getVal('a7'), a8: getVal('a8'), a9: getVal('a9'),
+    a10: getVal('a10'),
+    ass_total: parseFloat(calcTotal(ASS, 7)),
+    b1: getVal('b1'), b2: getVal('b2'), b3: getVal('b3'),
+    b4: getVal('b4'), b5: getVal('b5'), b6: getVal('b6'),
+    b7: getVal('b7'), b8: getVal('b8'), b9: getVal('b9'),
+    b10: getVal('b10'),
+    bas2_total: parseFloat(calcTotal(BAS2, 5)),
+    s1: getVal('s1'), s2: getVal('s2'), s3: getVal('s3'), s4: getVal('s4'),
+    shsc_total: parseFloat(calcTotal(SHSC, 7)),
+  };
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/exercise_group_responses`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok || res.status === 201) {
+      showPage(8);
+    } else {
+      const err = await res.text();
+      console.error(err);
+      alert('提交時發生錯誤，請稍後再試。');
+      btn.disabled = false;
+      btn.textContent = '提交問卷 ✓';
+    }
+  } catch (e) {
+    console.error(e);
+    alert('網路連線異常，請確認網路後再試。');
+    btn.disabled = false;
+    btn.textContent = '提交問卷 ✓';
+  }
+}
+</script>
+</body>
+</html>
